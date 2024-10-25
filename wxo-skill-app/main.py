@@ -42,7 +42,7 @@ def get_weekday():
     wd = WEEKDAY[lang][dt.weekday]       
     return {"weekday": wd}, 200
 
-@app.rout("/range", methods=["POST"])
+@app.route("/range", methods=["POST"])
 def range_list():
     """returns integer list
     Request body:
