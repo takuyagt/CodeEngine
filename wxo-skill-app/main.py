@@ -25,7 +25,7 @@ WEEKDAY = {
 def get_weekday():
     """returns weekday
     Request body:
-        datetime: (required) date time value in ISO format
+        date: (required) date value in ISO format
         language: (optional) language code (Supported: 'en', 'ja')
 
     Returns:
@@ -34,7 +34,7 @@ def get_weekday():
     """
     data = flask.json.loads(flask.request.data)
     app.logger.info(f"Received event: {data}")
-    sdt = data["datetime"]
+    sdt = data["date"]
     dt = parser.isoparse(sdt)
     lang = data.get("language", "en").lower()
     if lang not in list(WEEKDAY.keys()):
