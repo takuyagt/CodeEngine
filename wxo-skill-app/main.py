@@ -34,11 +34,17 @@ def get_weekday():
     """
     data = flask.json.loads(flask.request.data)
     app.logger.info(f"Received event: {data}")
+    if "date" not in data:
+        return {"message": "Required 'date' parameter in body"}, 400
     sdt = data["date"]
-    dt = parser.isoparse(sdt)
+    try:
+        dt = parser.isoparse(sdt)
+    except ValueError as err:
+        app.logger.error(f"Failed to parse date format: {sdt}", err)
+        return {"message": f"Invalid date format: {sdt}"}, 400
     lang = data.get("language", "en").lower()
     if lang not in list(WEEKDAY.keys()):
-        return {"message": f"unsupported language: {lang}, supported languages: {list(WEEKDAY.keys())}"}
+        return {"message": f"unsupported language: {lang}, supported languages: {list(WEEKDAY.keys())}"}, 400
     wd = WEEKDAY[lang][dt.weekday()]
     return {"weekday": wd}, 200
 
