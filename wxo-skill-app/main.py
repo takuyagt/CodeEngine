@@ -42,20 +42,21 @@ def get_weekday():
     wd = WEEKDAY[lang][dt.weekday()]
     return {"weekday": wd}, 200
 
-@app.route("/range", methods=["POST"])
-def range_list():
+@app.route("/counter", methods=["POST"])
+def loop_counter():
     """returns integer list
     Request body:
         size: (required) size of list
 
     Returns:
-        body: weekday: weekday label
+        body: loop: list of {"current_iteration": <int>, "total_iteration_needed": <int>}
         code: status code
     """
     data = flask.json.loads(flask.request.data)
     app.logger.info(f"Received event: {data}")
     s = int(data["size"])
-    return {"range": list(range(s))}, 200
+    rt = [{"current_iteration": i, "total_iteration_needed": s} for i in range(s)]
+    return {"loop": rt}, 200
 
 
 if __name__ == "__main__":
