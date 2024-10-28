@@ -39,7 +39,7 @@ def get_weekday():
     lang = data.get("language", "en").lower()
     if lang not in list(WEEKDAY.keys()):
         return {"message": f"unsupported language: {lang}, supported languages: {list(WEEKDAY.keys())}"}
-    wd = WEEKDAY[lang][dt.weekday]       
+    wd = WEEKDAY[lang][dt.weekday()]
     return {"weekday": wd}, 200
 
 @app.route("/range", methods=["POST"])
