@@ -64,6 +64,52 @@ def loop_counter():
     rt = [{"current_iteration": i, "total_iteration_needed": s} for i in range(s)]
     return {"loop": rt}, 200
 
+@app.route("/nested", methods=["POST"])
+def nested_objects():
+    """returns integer list
+    Request body:
+        message: any message
+
+    Returns:
+        message: str
+        'nested_object.message': str
+        'messages[0]': str
+        'non.nested.object': str
+        'expression[?aaaa]': str
+        'has space': str
+        '"double quated"': str
+        nested_object: dict[str, str]
+            message: float
+            'non.nested.object': str
+            'message[0]': str
+            'has space': str
+            '"double quated"': str
+        messages: list[str]
+    """
+    data = flask.json.loads(flask.request.data)
+    app.logger.info(f"Received event: {data}")
+    message = data.get("message", "no mesage")
+    child = {
+        'message': 123.456,
+        'non.nested.object': "in nest: " + message,
+        'message[0]': "in nest: " + message,
+        'has space': "in nest: " + message,
+        '"double quated"': "in nest: " + message,
+    }
+    rt = {
+        'message': message,
+        'messages': ["list[0] " + message],
+        'nested_object.message': message,
+        'messages[0]': message,
+        'non.nested.object': message,
+        'expression[?aaaa]': message,
+        'has space': message,
+        '"double quated"': message,
+        'nested_object': child,
+    }
+    
+    return rt, 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(PORT))
