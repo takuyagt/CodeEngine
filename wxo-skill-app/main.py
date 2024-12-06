@@ -66,6 +66,24 @@ def loop_counter():
     rt = [{"current_iteration": i, "total_iteration_needed": s, "text": t % i} for i in range(s)]
     return {"loop": rt}, 200
 
+@app.route("/split", methods=["POST"])
+def loop_counter():
+    """returns integer list
+    Request body:
+        text: (required) text to be splitted
+        delimiter: (optional) default: "\s"
+    Returns:
+        body: loop: list of {"current_iteration": <int>, "total_iteration_needed": <int>}
+        code: status code
+    """
+    data = flask.json.loads(flask.request.data)
+    app.logger.info(f"Received event: {data}")
+    t = str(data["text"])
+    d = str(data.get("delimiter", " "))
+    parts = t.split(d)
+    rt = [{"current_iteration": i, "total_iteration_needed": len(parts), "text": p} for i, p in enumerate(parts)]
+    return {"loop": rt}, 200
+
 @app.route("/nested", methods=["POST"])
 def nested_objects():
     """returns integer list
