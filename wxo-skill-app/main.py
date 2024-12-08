@@ -187,7 +187,7 @@ def suggest_plans():
     if "dinner" in request:
         res_plans = predefined[1]
     else:
-        res_plans = predefined[-1]
+        res_plans = predefined[2]
     suggestions = []
     for res_plan in res_plans:
         if not res_plan:
@@ -245,7 +245,7 @@ def reserve_table():
         result = "Sorry, not found a table at that time"
         res_id = ""
     else:
-        result = f"Reserved a table of {restaurant} for {n} at {dt.strftime('%Y-%m-%d %H:%M')}"
+        result = f"Reserved a table at {restaurant} for {n} at {dt.strftime('%Y-%m-%d %H:%M')}"
         res_id = secrets.token_urlsafe(6)
     return {"result": result, "reservation_id": res_id}, 200
 
