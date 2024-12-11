@@ -22,3 +22,7 @@
    - Open **Environment variables (optional)**, and add environment variables.
    - We recommend setting **Min number of instances** to `1`.
 3. Confirm that the application status changes to **Ready**.
+
+### Run on your local
+
+1. `python main.py`
