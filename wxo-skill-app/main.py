@@ -22,10 +22,11 @@ WEEKDAY = {
     'ja': ['月', '火', '水', '木', '金', '土', '日'],
 }
 
-GENAI_API_URL = os.getenv("GENAI_API_URL", "https://us-south.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29")
+GENAI_API_URL = os.getenv("GENAI_API_URL")
 GENAI_API_BEARER_TOKEN = os.getenv("GENAI_API_BEARER_TOKEN")
 GENAI_PROJECT_ID = os.getenv("GENAI_PROJECT_ID")
 GENAI_MODEL_ID = os.getenv("GENAI_MODEL_ID")
+
 
 @app.route("/weekday", methods=["POST"])
 def get_weekday():
@@ -254,7 +255,7 @@ def reserve_table():
     return {"result": result, "reservation_id": res_id}, 200
 
 
-@app.route("/parrot_back", method=["POST"])
+@app.route("/parrot_back", methods=["POST"])
 def parrot_back():
     """return input
     Request body:
