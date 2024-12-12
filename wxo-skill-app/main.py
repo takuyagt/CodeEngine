@@ -2,7 +2,6 @@ import logging
 import os
 import re
 import secrets
-import requests
 
 import flask
 from dateutil import parser
