@@ -268,8 +268,8 @@ def parrot_back():
     return data, 200
 
 
-@app.route("/array_objects", method=["POST"])
-def array_objects():
+@app.route("/object_array", methods=["POST"])
+def object_array():
     """return input
     Request body:
         any
