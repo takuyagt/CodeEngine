@@ -268,5 +268,18 @@ def parrot_back():
     return data, 200
 
 
+@app.route("/array_objects", method=["POST"])
+def array_objects():
+    """return input
+    Request body:
+        any
+    Returns:
+        any
+    """
+    data = flask.json.loads(flask.request.data)
+    app.logger.info("Received event: %s", str(data))
+    return data, 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(PORT))
