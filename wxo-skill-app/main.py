@@ -338,8 +338,9 @@ def callback():
         key: string
         message: string
     Returns:
-        key: string
-        message: string
+        output:
+            key: string
+            message: string
     """
     data = flask.json.loads(flask.request.data)
     app.logger.info("Callback: %s", str(data))
@@ -355,7 +356,7 @@ def callback():
     if url is None:
         return {'message': f'Not found: {key}'}, 404
 
-    payload = {'message': message}
+    payload = {'output': {'key': key, 'message': message}}
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, json=payload, headers=headers, timeout=10)
 
@@ -364,6 +365,7 @@ def callback():
             'message': f"Failed to call back: {url}, [{response.status_code}] {response.content.decode('utf-8')}"
         }, 400
 
+    app.logger.info('Callback success: %s', str(payload))
     payload['callback_info'] = CALLBACK_INFO_LIST.pop(idx)
     return payload, 200
 
