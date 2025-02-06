@@ -2,9 +2,12 @@ import logging
 import os
 import re
 import secrets
+from typing import TypedDict
+import uuid
 
 import flask
 from dateutil import parser
+import requests
 
 # Enrichment task queue
 
@@ -279,6 +282,90 @@ def object_array():
     data = flask.json.loads(flask.request.data)
     app.logger.info("Received event: %s", str(data))
     return data, 200
+
+
+class CallbackInfo(TypedDict):
+    """
+    CallbackInfo class to store callback information.
+
+    Attributes:
+        key (str): key.
+        callback_url (str): Callback URL.
+
+    """
+    key: str
+    callback_url: str
+
+
+CALLBACK_INFO_LIST: list[CallbackInfo] = []
+
+
+@app.post("/async_requests")
+def async_request():
+    """return input
+    Request body:
+        key: string
+    Returns:
+        key: string
+    """
+    data = flask.json.loads(flask.request.data)
+    app.logger.info("Received event: %s", str(data))
+    key = data.get("key")
+    if key is None:
+        key = uuid.uuid4()
+    callback_url = flask.request.headers.get("callbackUrl")
+    if callback_url is None:
+        return {"message": "'callbackUrl' header is required."}, 400
+    entry = {"key": key, "callback_url": callback_url}
+    CALLBACK_INFO_LIST.append(entry)
+    return entry, 202
+
+
+@app.get("/async_requests")
+def list_async_requests():
+    """return input
+    Request body:
+    Returns:
+       async_requests: list[dict[str, str]]
+    """
+    return {"async_requests": CALLBACK_INFO_LIST}, 200
+
+
+@app.post('/callback')
+def callback():
+    """return input
+    Request body:
+        key: string
+        message: string
+    Returns:
+        key: string
+        message: string
+    """
+    data = flask.json.loads(flask.request.data)
+    app.logger.info("Callback: %s", str(data))
+    key = data.get("key")
+    message = data.get("message")
+    url = None
+    idx = 0
+    for idx, info in enumerate(CALLBACK_INFO_LIST):
+        if info["key"] == key:
+            url = info["callback_url"]
+            break
+
+    if url is None:
+        return {'message': f'Not found: {key}'}, 404
+
+    payload = {'message': message}
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, json=payload, headers=headers, timeout=10)
+
+    if response.status_code > 299:
+        return {
+            'message': f"Failed to call back: {url}, [{response.status_code}] {response.content.decode('utf-8')}"
+        }, 400
+
+    payload['callback_info'] = CALLBACK_INFO_LIST.pop(idx)
+    return payload, 200
 
 
 if __name__ == "__main__":
