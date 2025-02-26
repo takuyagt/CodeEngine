@@ -356,9 +356,8 @@ def callback():
     if url is None:
         return {'message': f'Not found: {key}'}, 404
 
-    # If the request body of callbacks in OpenAPI spec has "x-ibm-parameter-wrapper", we don't need to wrap with "output".
-    # payload = {'output': {'key': key, 'message': message}}
-    payload = {'key': key, 'message': message}
+    # payload = {'key': key, 'message': message}
+    payload = {'output': {'key': key, 'message': message}}
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, json=payload, headers=headers, timeout=10)
 
